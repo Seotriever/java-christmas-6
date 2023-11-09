@@ -1,5 +1,6 @@
 package christmas;
 
+<<<<<<< HEAD
 import java.util.HashMap;
 
 import static christmas.InputView.readDate;
@@ -17,5 +18,10 @@ public class Application {
         //  ================================================= OutputView  구현
         printMenu(orderMap, reservingDate);
 
+=======
+public class Application {
+    public static void main(String[] args) {
+        // TODO: 프로그램 구현
+>>>>>>> a5fd319 (feat: setup precourse christmas project)
     }
 }
