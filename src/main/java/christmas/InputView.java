@@ -2,9 +2,11 @@ package christmas;
 
 import camp.nextstep.edu.missionutils.Console;
 
+import java.util.HashMap;
+
 public class InputView {
         //        ========================================== 날짜 입력 ============================================
-        public static void readDate() {
+        public static int readDate() {
                 System.out.println("12월 중 식당 예상 방문 날짜는 언제인가요? (숫자만 입력해 주세요!)");
                 String input = Console.readLine();
                 if (validateDate(input) == false) {
@@ -13,6 +15,7 @@ public class InputView {
                 }
                 tryParseIntInput(input);
                 System.out.println(tryParseIntInput(input));
+                return tryParseIntInput(input);
         }
 
         public static boolean validateDate(String input) {
@@ -32,10 +35,8 @@ public class InputView {
                 return intInput;
         }
         //      ==================================== 주문 입력 ============================================
-        public static void readOrder() {
-                System.out.println("<주문 메뉴>");
-                Order.inputOrder();
-
+        public static HashMap<String, Integer> readOrder() {
+                return Order.readOrder();
         }
 
 }

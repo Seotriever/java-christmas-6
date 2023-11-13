@@ -14,8 +14,7 @@ class Order {
                 orderItems = new HashMap<>();
                 initializeMenu();
         }
-
-        public void initializeMenu() {         // order
+        public void initializeMenu() {         // 메뉴 선언
                 menuMap.put("양송이수프", new MenuInpo("양송이수프", 6000));
                 menuMap.put("타파스", new MenuInpo("타파스", 5500));
                 menuMap.put("시저샐러드", new MenuInpo("시저샐러드", 8000));
@@ -30,7 +29,7 @@ class Order {
                 menuMap.put("샴페인", new MenuInpo("샴페인", 25000));
         }
 
-        public static void inputOrder() {
+        public static HashMap<String, Integer> readOrder() {
                 Order order = new Order();
                 order.initializeMenu();
                 System.out.println("주문하실 메뉴를 메뉴와 개수를 알려 주세요. (e.g. 해산물파스타-2,레드와인-1,초코케이크-1)");
@@ -39,22 +38,33 @@ class Order {
                 String[] items = orderInput.trim().split(",");
                 for (String item : items) {
                         String[] parts = item.trim().split("-");
-                        validOrder(parts);
-                        System.out.println("parts.length = " + parts.length);
-                        validateOrder(parts[0],parts[1],orderMap);
+                        validateOrder(parts,parts[0],parts[1],orderMap);
                         orderMap.put(parts[0], Integer.parseInt(parts[1]));
-                        System.out.println(parts[0] + " " + parts[1] + "개");          // 주문내역
+                        System.out.println(parts[0] + " " + parts[1] + "개");          //todo 주문내역 제출전 삭제
+                }
+                return orderMap;
+        }
+        public static void validateOrder(String[] parts, String order, String quantity, Map<String, Integer> orderMap) {       // todo 메서드 리펙토링(복합)
+                try {
+                        if (!menuMap.containsKey(order)) {
+                                System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
+                                throw new IllegalArgumentException();           
+                        }
+                        isValidNumeric(quantity);
+                        checkDuplicate(order, orderMap);
+                        validOrderType(parts);
+                } catch (IllegalArgumentException e) {
+                        readOrder();
                 }
         }
-
-        public static void validOrder(String[] parts) {         //todo 메서드 리펙토링(길이)
+        public static void validOrderType(String[] parts) {         //todo 메서드 리펙토링(형태)
                 try {
                         if (parts.length != 2) {
                                 throw new IllegalArgumentException();
                         }
                 } catch (IllegalArgumentException e) {
                         System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
-                        inputOrder();
+                        readOrder();
                 }
         }
         public static void checkDuplicate(String order, Map<String, Integer> orderMap) {
@@ -62,18 +72,6 @@ class Order {
                         System.out.println("이미 주문된 메뉴입니다.");
                         System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
                         throw new IllegalArgumentException();
-                }
-        }
-        public static void validateOrder(String order, String quantity,Map<String, Integer> orderMap) {       // todo 메서드 리펙토링(복합)
-                try {
-                        if (!menuMap.containsKey(order)) {
-                                System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
-                                throw new IllegalArgumentException();           //todo 예외처리후 다시 입력 만들어야함
-                        }
-                        isValidNumeric(quantity);
-                        checkDuplicate(order, orderMap);
-                } catch (IllegalArgumentException e) {
-                        inputOrder();
                 }
         }
         public static void isValidNumeric(String quantity) {
@@ -89,12 +87,10 @@ class Order {
                         throw new IllegalArgumentException();
                 }
         }
-
-
-        public static void main(String[] args) {                // 주문 내역 테스트를 위한 main()
-                Order order = new Order();
-                order.initializeMenu(); // 메뉴초기화
-
-                order.inputOrder();
-        }
+//        public static void main(String[] args) {                // 주문 내역 테스트를 위한 main()
+//                Order order = new Order();
+//                order.initializeMenu(); // 메뉴초기화
+//
+//                order.inputOrder();
+//        }
 }
