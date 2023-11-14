@@ -1,11 +1,11 @@
 package christmas;
 
-class MenuInpo {
+class MenuInfo {
 
         private String name;
         private int price;
 
-        public MenuInpo(String name, int price) {
+        public MenuInfo(String name, int price) {
                 this.name = name;
                 this.price = price;
         }
