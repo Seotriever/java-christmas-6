@@ -67,45 +67,11 @@ class Order {
                         String[] parts = item.trim().split("-");
                         validateOrder(parts,parts[0],parts[1],orderMap);        // 주문 통합 유효성 검사
                         orderMap.put(parts[0], Integer.parseInt(parts[1]));
-                        notOnlyDrink(orderMap);
+                        notOnlyDrink(orderMap); // 음료만 주문했을때 재주문 로직
                 }
                 return orderMap;
         }
 
-        public static void notOnlyDrink(HashMap<String, Integer> orderMap) {
-                try {
-                        if (orderOnlyDrink(orderMap) == false) {
-                                System.out.println("[ERROR] 음료만 주문 시, 주문할 수 없습니다.");
-                                System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
-                                throw new IllegalArgumentException();
-                        }
-                } catch (IllegalArgumentException e) {
-                        readOrder();
-                }
-        }
-        public static boolean orderOnlyDrink(HashMap<String, Integer> orderMap) {
-                        Set<String> set = orderMap.keySet();
-                        for (String key : set) {
-                                if (exceptDrinkMap.contains(key)) {
-                                        return true;
-                                }
-                        }
-                        return false;
-                }
-        public static int calculateOriginalTotalPrice(HashMap<String, Integer> orderMap) {
-                int total = 0;
-
-                for (Map.Entry<String, Integer> entry : orderMap.entrySet()) {
-                        String menuName = entry.getKey();
-                        int quantity = entry.getValue();
-                        if (menuMap.containsKey(menuName)) {
-                                MenuInfo menuInfo = menuMap.get(menuName);
-                                int menuTotalPrice = menuInfo.getPrice() * quantity;
-                                total += menuTotalPrice;
-                        }
-                }
-                return total;
-        }
 
 
 
@@ -116,10 +82,6 @@ class Order {
                                 System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
                                 throw new IllegalArgumentException();
                         }
-//                        if (orderOnlyDrink(parts) == false) {   //음료만 시키면 예외처리
-//                                System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
-//                                throw new IllegalArgumentException();
-//                        }
                         isValidNumeric(quantity);               // 갯수 유효성 검사
                         checkDuplicate(orderName, orderMap);    // 주문 중복 검사
                         checkOrderType(parts);          //주문-갯수 양식 검사
@@ -158,5 +120,39 @@ class Order {
                         System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
                         throw new IllegalArgumentException();
                 }
+        }
+        public static void notOnlyDrink(HashMap<String, Integer> orderMap) {
+                try {
+                        if (orderOnlyDrink(orderMap) == false) {
+                                System.out.println("[ERROR] 음료만 주문 시, 주문할 수 없습니다.");
+                                System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
+                                throw new IllegalArgumentException();
+                        }
+                } catch (IllegalArgumentException e) {
+                        readOrder();
+                }
+        }
+        public static boolean orderOnlyDrink(HashMap<String, Integer> orderMap) {
+                        Set<String> set = orderMap.keySet();
+                        for (String key : set) {
+                                if (exceptDrinkMap.contains(key)) {
+                                        return true;
+                                }
+                        }
+                        return false;
+                }
+        public static int calculateOriginalTotalPrice(HashMap<String, Integer> orderMap) {
+                int total = 0;
+
+                for (Map.Entry<String, Integer> entry : orderMap.entrySet()) {
+                        String menuName = entry.getKey();
+                        int quantity = entry.getValue();
+                        if (menuMap.containsKey(menuName)) {
+                                MenuInfo menuInfo = menuMap.get(menuName);
+                                int menuTotalPrice = menuInfo.getPrice() * quantity;
+                                total += menuTotalPrice;
+                        }
+                }
+                return total;
         }
 }
