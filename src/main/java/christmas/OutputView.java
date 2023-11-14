@@ -34,25 +34,36 @@ public class OutputView {
                 printOrder(orderMap);           //주문메뉴 출력
                 System.out.println("\n<할인 전 총주문 금액>\n" + printOriginalTotalPrice(orderMap) + "원\n");
                 printOriginalTotalPrice(orderMap);      //todo 할인 전 총주문 금액 출력 / 상황보고 print()로변경
-                int applyEvent = applyBenefit(orderMap);            // 이벤트 적용 대상: 1, 미적용 대상: 0
+                int applyEvent = applyBenefit(orderMap, reservingDate);            // 이벤트 적용 대상: 1, 미적용 대상: 0
 
-                existGift(convertToIntWithoutComma(printOriginalTotalPrice(orderMap)), applyEvent);
+                existGift(convertToIntWithoutComma(printOriginalTotalPrice(orderMap)));
                 // 증정           // 증정 메뉴 출력
-                int totalDiscount = benefitList(orderMap, reservingDate, applyEvent); //혜택 내역
-                System.out.println("<총혜택 금액>\n-" + inputComma(totalDiscount)+"원");
+                int totalDiscount = benefitList(orderMap, reservingDate,applyEvent); //혜택 내역
+                System.out.println("<총혜택 금액>\n" + inputComma(totalDiscount)+"원\n");
 
         }
 
-        public static int benefitList(HashMap<String, Integer> orderMap, int reservingDate, int applyEvent) {
+        public static int benefitList(HashMap<String, Integer> orderMap, int reservingDate,int applyEvent) {
                 int totalDiscount = 0;
-                System.out.println("<혜택 내역>");          //todo 추후 혜택통합 메서드 생성? / 없음 조건문 만들어야함
-                int dDayDiscount = dDayDiscount(applyEvent, reservingDate, totalDiscount);                // 크리스마스 디데이 할인
-                int dayCategory = dayCategory(orderMap, reservingDate, applyEvent, totalDiscount);       // 평일or주말 할인
-                int specialDiscount = specialDiscount(reservingDate, applyEvent, totalDiscount);              // 특별 할인
+                System.out.println("<혜택 내역>");          
+                if (!isApplyEvent(applyEvent)) {        // 날짜를 통해서 이벤트 미 적용시 totalDiscount=0으로 반환
+                        System.out.println("없음\n");
+                        return totalDiscount;
+                }
+                int dDayDiscount = dDayDiscount( reservingDate, totalDiscount);                // 크리스마스 디데이 할인
+                int dayCategory = dayCategory(orderMap, reservingDate, totalDiscount);       // 평일or주말 할인
+                int specialDiscount = specialDiscount(reservingDate, totalDiscount);              // 특별 할인
                 int GiftEvent = GiftEvent(convertToIntWithoutComma(printOriginalTotalPrice(orderMap)), totalDiscount); // 증정이벤트
-                totalDiscount = dDayDiscount + dayCategory + specialDiscount + GiftEvent;
 
-                return totalDiscount;
+                totalDiscount = dDayDiscount + dayCategory + specialDiscount + GiftEvent;
+                return Math.abs(totalDiscount);
+        }
+
+        public static boolean isApplyEvent(int applyEvent) {
+                if (applyEvent == 0) {
+                        return false;
+                }
+                return true;
         }
 
         public static int GiftEvent(int originalTotalPrice, int totalDiscount) {
@@ -67,22 +78,22 @@ public class OutputView {
                 return totalDiscount;
         }
 
-        public static int dayCategory(HashMap<String, Integer> orderMap, int reservingDate, int applyEvent, int totalDiscount) {
+        public static int dayCategory(HashMap<String, Integer> orderMap, int reservingDate, int totalDiscount) {
                 int dayType = isWeekend(reservingDate);
                 if (dayType == 0) {
                         int discountDessert = menuDiscount(orderMap, dessertMenu);
-                        System.out.println("평일 할인: -" + inputComma(discountDessert) + "원");
+                        System.out.println("평일 할인: " + inputComma(-discountDessert) + "원");
                         return totalDiscount += discountDessert;
                 }
                 if (dayType == 1) {
                         int discountMainMenu = menuDiscount(orderMap, mainMenu);
-                        System.out.println("주말 할인: -" + inputComma(discountMainMenu) + "원");
+                        System.out.println("주말 할인: -" + inputComma(-discountMainMenu) + "원");
                         return totalDiscount += discountMainMenu;
                 }
                 return totalDiscount;
         }
 
-        public static int specialDiscount(int reservingDate, int applyEvent, int totalDiscount) {
+        public static int specialDiscount(int reservingDate, int totalDiscount) {
                 int dayType = 0;
                 if (reservingDate % 7 == 3 || reservingDate == 25) {
                         dayType = 1;
@@ -102,8 +113,8 @@ public class OutputView {
                 return dayType;
         }
 
-        public static int dDayDiscount(int applyEvent, int reservingDate, int totalDiscount) {
-                if (reservingDate > 25 || applyEvent == 0) {
+        public static int dDayDiscount( int reservingDate, int totalDiscount) {
+                if (reservingDate > 25) {
                         System.out.println("없음");
                         totalDiscount += 0;
                         return totalDiscount;
@@ -149,10 +160,13 @@ public class OutputView {
         }
         //                                      주문메뉴,할인전 금액끝 ========================================
 
-        public static int applyBenefit(HashMap<String, Integer> orderMap) {        // 최소금액 확인
+        public static int applyBenefit(HashMap<String, Integer> orderMap,int reservingDate) {        // 최소금액 확인
                 int ex = convertToIntWithoutComma(printOriginalTotalPrice(orderMap));
                 if (ex < 10000) {
                         return 0;       // 이벤트 미 적용
+                }
+                if (reservingDate > 25) {
+                        return 0;
                 }
                 return 1;               // 이벤트 적용
         }
@@ -163,7 +177,7 @@ public class OutputView {
                 return priceWithoutComma;
         }
 
-        public static void existGift(int originalTotalPrice, int applyEvent) {
+        public static void existGift(int originalTotalPrice) {
                 System.out.println("<증정 메뉴>");
                 int existGift = 0;
                 if (originalTotalPrice >= 120000) {
@@ -175,8 +189,5 @@ public class OutputView {
                 if (existGift != 1) {
                         System.out.println("없음\n");
                 }
-//                if (applyEvent == 0) {
-//                        System.out.println("없음\n");
-//                }
         }
 }
