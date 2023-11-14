@@ -10,7 +10,7 @@ class MenuInfo {
                 this.price = price;
         }
 
-        public String getName() {
+        public String getName() {       //추후 map 비교 사용
                 return name;
         }
 
