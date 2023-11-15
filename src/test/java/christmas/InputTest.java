@@ -10,7 +10,7 @@ public class InputTest {
         void 유효한_날짜_입력() {
                 String input = "3";
                 assertThatNoException().isThrownBy(() -> {
-                        InputView.validateDate(input);
+                        InputValidator.validateDate(input);
                 });
         }
 

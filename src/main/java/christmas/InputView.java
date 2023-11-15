@@ -4,6 +4,9 @@ import camp.nextstep.edu.missionutils.Console;
 
 import java.util.HashMap;
 
+import static christmas.InputValidator.tryParseIntInput;
+import static christmas.InputValidator.validateDate;
+
 public class InputView {
         //        ========================================== 날짜 입력 ============================================
         public static int readDate() {
@@ -19,22 +22,6 @@ public class InputView {
                 }
         }
 
-        public static boolean validateDate(String input) {
-                try {
-                        int parseInt = tryParseIntInput(input);
-                        if (parseInt < 1 || parseInt > 31) {
-                                throw new IllegalArgumentException();
-                        }
-                } catch (NumberFormatException e) {
-                        System.out.println("[ERROR] 유효하지 않은 날짜입니다. 다시 입력해 주세요.");
-                }
-                return true;
-        }
-
-        public static int tryParseIntInput(String input) {
-                int intInput = Integer.parseInt(input);
-                return intInput;
-        }
 
         //      ==================================== 주문 입력 ============================================
         public static HashMap<String, Integer> readOrder() {
