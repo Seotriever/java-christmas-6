@@ -4,15 +4,15 @@ import camp.nextstep.edu.missionutils.Console;
 
 import java.util.*;
 
+import static christmas.InputView.readOrder;
+
 class Order {
         private static Map<String, MenuInfo> menuMap;
-        private Map<String, Integer> orderItems;
         private static List<String> exceptDrinkMap;
 
 
         public Order() {
                 menuMap = new HashMap<>();
-                orderItems = new HashMap<>();
                 exceptDrinkMap = new ArrayList<>();
 
                 initializeMenu();
@@ -42,22 +42,6 @@ class Order {
                 exceptDrinkMap.add("크리스마스파스타");
                 exceptDrinkMap.add("초코케이크");
                 exceptDrinkMap.add("아이스크림");
-//                exceptDrinkMap.add("제로콜라");
-//                exceptDrinkMap.add("레드와인");
-//                exceptDrinkMap.add("샴페인");
-        }
-
-
-        public static HashMap<String, Integer> readOrder() {
-                Order order = new Order();
-                order.initializeMenu(); // 메뉴 초기화 선언
-                order.initializeExceptDrink();  // 음료제외 메뉴 초기화
-
-                System.out.println("주문하실 메뉴를 메뉴와 개수를 알려 주세요." +
-                        " (e.g. 해산물파스타-2,레드와인-1,초코케이크-1)");
-                String orderInput = Console.readLine();
-                HashMap<String, Integer> orderMap = orderList(orderInput);
-                return orderMap;
         }
 
         public static HashMap<String, Integer> orderList(String orderInput) {

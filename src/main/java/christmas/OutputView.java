@@ -68,11 +68,10 @@ public class OutputView {
                         System.out.println("없음\n");
                         return totalDiscount;
                 }
-                int dDayDiscount = dDayDiscount( reservingDate, totalDiscount);                // 크리스마스 디데이 할인
-                int dayCategory = dayCategory(orderMap, reservingDate, totalDiscount);       // 평일or주말 할인
-                int specialDiscount = specialDiscount(reservingDate, totalDiscount);              // 특별 할인
-                int GiftEvent = GiftEvent(printOriginalTotalPrice(orderMap), totalDiscount); // 증정이벤트
-
+                int dDayDiscount = dDayDiscount( reservingDate);                // 크리스마스 디데이 할인
+                int dayCategory = dayCategory(orderMap, reservingDate);       // 평일or주말 할인
+                int specialDiscount = specialDiscount(reservingDate);              // 특별 할인
+                int GiftEvent = GiftEvent(printOriginalTotalPrice(orderMap)); // 증정이벤트
                 totalDiscount = dDayDiscount + dayCategory + specialDiscount + GiftEvent;
                 return Math.abs(totalDiscount);
         }
@@ -84,34 +83,37 @@ public class OutputView {
                 return true;
         }
 
-        public static int GiftEvent(int originalTotalPrice, int totalDiscount) {
+        public static int GiftEvent(int originalTotalPrice) {
+                int discount = 0;
                 if (originalTotalPrice > 120000) {
                         System.out.println("증정 이벤트: -25,000원\n");
-                        totalDiscount += 25000;
-                        return totalDiscount;
+                        discount += 25000;
+                        return discount;
                 }
                 if (originalTotalPrice <= 120000) {
                         System.out.println("증정 이벤트: 0원\n");
                 }
-                return totalDiscount;
+                return discount;
         }
 
-        public static int dayCategory(HashMap<String, Integer> orderMap, int reservingDate, int totalDiscount) {
+        public static int dayCategory(HashMap<String, Integer> orderMap, int reservingDate) {
+                int discount = 0;
                 int dayType = isWeekend(reservingDate);
                 if (dayType == 0) {
                         int discountDessert = menuDiscount(orderMap, dessertMenu);
                         System.out.println("평일 할인: " + inputComma(-discountDessert) + "원");
-                        return totalDiscount += discountDessert;
+                        return discount += discountDessert;
                 }
                 if (dayType == 1) {
                         int discountMainMenu = menuDiscount(orderMap, mainMenu);
                         System.out.println("주말 할인: " + inputComma(-discountMainMenu) + "원");
-                        return totalDiscount += discountMainMenu;
+                        return discount += discountMainMenu;
                 }
-                return totalDiscount;
+                return discount;
         }
 
-        public static int specialDiscount(int reservingDate, int totalDiscount) {
+        public static int specialDiscount(int reservingDate) {
+                int discount = 0;
                 int dayType = 0;
                 if (reservingDate % 7 == 3 || reservingDate == 25) {
                         dayType = 1;
@@ -120,10 +122,10 @@ public class OutputView {
                         System.out.println("특별 할인: 0원");
                 }
                 if (dayType == 1) {
-                        totalDiscount += 1000;
+                        discount += 1000;
                         System.out.println("특별 할인: -1,000원");
                 }
-                return totalDiscount;
+                return discount;
         }
 
         public static int isWeekend(int reservingDate) {
@@ -134,16 +136,17 @@ public class OutputView {
                 return dayType;
         }
 
-        public static int dDayDiscount( int reservingDate, int totalDiscount) {
+        public static int dDayDiscount( int reservingDate) {
+                int discount = 0;
                 if (reservingDate > 25) {
                         System.out.println("크리스마스 디데이 할인: 0원");
-                        totalDiscount += 0;
-                        return totalDiscount;
+                        discount += 0;
+                        return discount;
                 }
                 String dDayDiscount = inputComma(900 + reservingDate * 100);               //todo 하드코딩 바꾸기
-                totalDiscount += 900 + reservingDate * 100;
+                discount += 900 + reservingDate * 100;
                 System.out.println("크리스마스 디데이 할인: -" + dDayDiscount + "원");
-                return totalDiscount;
+                return discount;
         }
 
 
