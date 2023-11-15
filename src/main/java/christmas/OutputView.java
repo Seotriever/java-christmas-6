@@ -32,10 +32,11 @@ public class OutputView {
 
 
         public static void printMenu(HashMap<String, Integer> orderMap, int reservingDate) { // OutView출력
+                int applyEvent = applyBenefit(orderMap);            // return 이벤트 적용 대상: 1, 미적용 대상: 0
                 printOrder(orderMap);           //주문메뉴 출력
                 System.out.println("\n<할인 전 총주문 금액>\n" + inputComma(printOriginalTotalPrice(orderMap)) + "원\n");
-                int originalTotalPrice = printOriginalTotalPrice(orderMap);      //\할인 전 총주문 금액 출력 및 할인전 금액 return
-                int applyEvent = applyBenefit(orderMap);            // return 이벤트 적용 대상: 1, 미적용 대상: 0
+                int originalTotalPrice = printOriginalTotalPrice(orderMap);      //및 할인전 금액 return
+
                 existGift(originalTotalPrice); // 증정 메뉴 출력
                 int totalDiscount = benefitList(orderMap, reservingDate,applyEvent); //혜택 내역 출력 및 할인 금액 return
                 System.out.println("<총혜택 금액>\n" + inputComma(-totalDiscount)+"원\n");    //총 혜택 금액 출력

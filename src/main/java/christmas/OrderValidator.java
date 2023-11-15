@@ -39,7 +39,7 @@ public class OrderValidator {
 
     public static void checkOrderType(String[] parts) {         //todo 메서드 리펙토링(형태)
         if (parts.length != 2) {
-            System.out.println("[ERROR] 주문형태");
+            System.out.println("[ERROR] 주문형태를 지켜서 입력해주세요");
             throw new IllegalArgumentException();
         }
     }
