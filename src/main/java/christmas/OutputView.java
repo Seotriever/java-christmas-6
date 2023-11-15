@@ -192,12 +192,6 @@ public class OutputView {
                 return 1;               // 이벤트 적용
         }
 
-        public static int convertToIntWithoutComma(String priceWithComma) {
-                // ,를 없애고 정수로 변환
-                int priceWithoutComma = Integer.parseInt(priceWithComma.replace(",", ""));
-                return priceWithoutComma;
-        }
-
         public static void existGift(int originalTotalPrice) {
                 System.out.println("<증정 메뉴>");
                 int existGift = 0;
