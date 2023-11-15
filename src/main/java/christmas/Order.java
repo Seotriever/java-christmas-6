@@ -52,17 +52,17 @@ class Order {
                         orderMap.put(parts[0], Integer.parseInt(parts[1]));
                 }
                 isNotOnlyDrink(orderMap); // 음료만 주문 했을때 재주문
-                limitQuantity(totalQuantity);   // 총 주문 갯수가 20개가 넘을 때 재주문
-                return orderMap;
+                return limitQuantity(totalQuantity, orderMap);  // 총 주문 갯수가 20개가 넘을 때 재주문
         }
-        public static void limitQuantity(int totalQuantity) {
+        public static HashMap<String , Integer> limitQuantity(int totalQuantity,HashMap<String, Integer> orderMap) {
                 try {
                         if (totalQuantity > 20) {
                                 throw new IllegalArgumentException();
                         }
+                        return orderMap;
                 } catch (IllegalArgumentException e) {
                         System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
-                        readOrder();
+                        return readOrder();
                 }
         }
 
