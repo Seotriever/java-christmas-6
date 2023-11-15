@@ -32,28 +32,46 @@ public class OutputView {
 
         public static void printMenu(HashMap<String, Integer> orderMap, int reservingDate) {// OutView출력
                 printOrder(orderMap);           //주문메뉴 출력
-                System.out.println("\n<할인 전 총주문 금액>\n" + printOriginalTotalPrice(orderMap) + "원\n");
-                printOriginalTotalPrice(orderMap);      //todo 할인 전 총주문 금액 출력 / 상황보고 print()로변경
-                int applyEvent = applyBenefit(orderMap, reservingDate);            // 이벤트 적용 대상: 1, 미적용 대상: 0
+                System.out.println("\n<할인 전 총주문 금액>\n" + inputComma(printOriginalTotalPrice(orderMap)) + "원\n");
+                int originalTotalPrice = printOriginalTotalPrice(orderMap);      //\할인 전 총주문 금액 출력 및 할인전 금액 return
+                int applyEvent = applyBenefit(orderMap);            // return 이벤트 적용 대상: 1, 미적용 대상: 0
+                existGift(printOriginalTotalPrice(orderMap)); // 증정 메뉴 출력
+                int totalDiscount = benefitList(orderMap, reservingDate,applyEvent); //혜택 내역 출력 및 할인 금액 return
+                System.out.println("<총혜택 금액>\n" + inputComma(-totalDiscount)+"원\n");    //총 혜택 금액
 
-                existGift(convertToIntWithoutComma(printOriginalTotalPrice(orderMap)));
-                // 증정           // 증정 메뉴 출력
-                int totalDiscount = benefitList(orderMap, reservingDate,applyEvent); //혜택 내역
-                System.out.println("<총혜택 금액>\n" + inputComma(totalDiscount)+"원\n");
-
+                int resultPrice = originalTotalPrice-totalDiscount;
+                System.out.println("<할인 후 예상 결제 금액>\n"+inputComma(resultPrice)+"원\n");
+                giftBadge(resultPrice);
         }
+        //todo 이벤트 기간: '크리스마스 디데이 할인'을 제외한 다른 이벤트는 2023.12.1 ~ 2023.12.31 동안 적용
 
+        public static int giftBadge(int resultPrice) {
+                if (resultPrice > 20000) {
+                        System.out.println("<12월 이벤트 배지>\n산타\n");
+                        return 3;
+                }
+                if (resultPrice > 10000) {
+                        System.out.println("<12월 이벤트 배지>\n트리\n");
+                        return 2;
+                }
+                if (resultPrice > 5000) {
+                        System.out.println("<12월 이벤트 배지>\n별\n");
+                        return 1;
+                }
+                System.out.println("<12월 이벤트 배지>\n없음\n");
+                return 0;
+        }
         public static int benefitList(HashMap<String, Integer> orderMap, int reservingDate,int applyEvent) {
                 int totalDiscount = 0;
-                System.out.println("<혜택 내역>");          
-                if (!isApplyEvent(applyEvent)) {        // 날짜를 통해서 이벤트 미 적용시 totalDiscount=0으로 반환
+                System.out.println("<혜택 내역>");
+                if (!isApplyEvent(applyEvent)) {
                         System.out.println("없음\n");
                         return totalDiscount;
                 }
                 int dDayDiscount = dDayDiscount( reservingDate, totalDiscount);                // 크리스마스 디데이 할인
                 int dayCategory = dayCategory(orderMap, reservingDate, totalDiscount);       // 평일or주말 할인
                 int specialDiscount = specialDiscount(reservingDate, totalDiscount);              // 특별 할인
-                int GiftEvent = GiftEvent(convertToIntWithoutComma(printOriginalTotalPrice(orderMap)), totalDiscount); // 증정이벤트
+                int GiftEvent = GiftEvent(printOriginalTotalPrice(orderMap), totalDiscount); // 증정이벤트
 
                 totalDiscount = dDayDiscount + dayCategory + specialDiscount + GiftEvent;
                 return Math.abs(totalDiscount);
@@ -73,7 +91,7 @@ public class OutputView {
                         return totalDiscount;
                 }
                 if (originalTotalPrice <= 120000) {
-                        System.out.println("증정 이벤트: 없음");
+                        System.out.println("증정 이벤트: 0원\n");
                 }
                 return totalDiscount;
         }
@@ -87,7 +105,7 @@ public class OutputView {
                 }
                 if (dayType == 1) {
                         int discountMainMenu = menuDiscount(orderMap, mainMenu);
-                        System.out.println("주말 할인: -" + inputComma(-discountMainMenu) + "원");
+                        System.out.println("주말 할인: " + inputComma(-discountMainMenu) + "원");
                         return totalDiscount += discountMainMenu;
                 }
                 return totalDiscount;
@@ -97,6 +115,9 @@ public class OutputView {
                 int dayType = 0;
                 if (reservingDate % 7 == 3 || reservingDate == 25) {
                         dayType = 1;
+                }
+                if (dayType == 0) {
+                        System.out.println("특별 할인: 0원");
                 }
                 if (dayType == 1) {
                         totalDiscount += 1000;
@@ -115,7 +136,7 @@ public class OutputView {
 
         public static int dDayDiscount( int reservingDate, int totalDiscount) {
                 if (reservingDate > 25) {
-                        System.out.println("없음");
+                        System.out.println("크리스마스 디데이 할인: 0원");
                         totalDiscount += 0;
                         return totalDiscount;
                 }
@@ -146,11 +167,11 @@ public class OutputView {
                 }
         }
 
-        public static String printOriginalTotalPrice(HashMap<String, Integer> orderMap) {// 할인 전 총주문 금액
+        public static int printOriginalTotalPrice(HashMap<String, Integer> orderMap) {// 할인 전 총주문 금액
                 int price = calculateOriginalTotalPrice(orderMap);
                 String priceWithComma = inputComma(price);
 //                System.out.println("\n<할인 전 총주문 금액>\n" + priceWithComma + "원\n");
-                return priceWithComma;
+                return price;
         }
 
         public static String inputComma(int Price) {            // 가격에 , 넣기
@@ -160,13 +181,10 @@ public class OutputView {
         }
         //                                      주문메뉴,할인전 금액끝 ========================================
 
-        public static int applyBenefit(HashMap<String, Integer> orderMap,int reservingDate) {        // 최소금액 확인
-                int ex = convertToIntWithoutComma(printOriginalTotalPrice(orderMap));
+        public static int applyBenefit(HashMap<String, Integer> orderMap) {        // 최소금액 확인
+                int ex = printOriginalTotalPrice(orderMap);
                 if (ex < 10000) {
                         return 0;       // 이벤트 미 적용
-                }
-                if (reservingDate > 25) {
-                        return 0;
                 }
                 return 1;               // 이벤트 적용
         }

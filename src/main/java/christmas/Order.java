@@ -52,7 +52,7 @@ class Order {
                 Order order = new Order();
                 order.initializeMenu(); // 메뉴 초기화 선언
                 order.initializeExceptDrink();  // 음료제외 메뉴 초기화
-                
+
                 System.out.println("주문하실 메뉴를 메뉴와 개수를 알려 주세요." +
                         " (e.g. 해산물파스타-2,레드와인-1,초코케이크-1)");
                 String orderInput = Console.readLine();
@@ -65,7 +65,7 @@ class Order {
                 String[] items = orderInput.trim().split(",");
                 for (String item : items) {
                         String[] parts = item.trim().split("-");
-                        validateOrder(parts,parts[0],parts[1],orderMap);        // 주문 통합 유효성 검사
+                        validateOrder(parts,parts[0],parts[1],orderMap);        // 주문 통합 유효성 검사 //todo 인덱스자체가 안맞을시 대처
                         orderMap.put(parts[0], Integer.parseInt(parts[1]));
                         notOnlyDrink(orderMap); // 음료만 주문했을때 재주문 로직
                 }
@@ -133,14 +133,14 @@ class Order {
                 }
         }
         public static boolean orderOnlyDrink(HashMap<String, Integer> orderMap) {
-                        Set<String> set = orderMap.keySet();
-                        for (String key : set) {
-                                if (exceptDrinkMap.contains(key)) {
-                                        return true;
-                                }
+                Set<String> set = orderMap.keySet();
+                for (String key : set) {
+                        if (exceptDrinkMap.contains(key)) {
+                                return true;
                         }
-                        return false;
                 }
+                return false;
+        }
         public static int calculateOriginalTotalPrice(HashMap<String, Integer> orderMap) {
                 int total = 0;
 
