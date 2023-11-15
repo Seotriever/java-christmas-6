@@ -37,13 +37,11 @@ public class OutputView {
                 int applyEvent = applyBenefit(orderMap);            // return 이벤트 적용 대상: 1, 미적용 대상: 0
                 existGift(printOriginalTotalPrice(orderMap)); // 증정 메뉴 출력
                 int totalDiscount = benefitList(orderMap, reservingDate,applyEvent); //혜택 내역 출력 및 할인 금액 return
-                System.out.println("<총혜택 금액>\n" + inputComma(-totalDiscount)+"원\n");    //총 혜택 금액
-
+                System.out.println("<총혜택 금액>\n" + inputComma(-totalDiscount)+"원\n");    //총 혜택 금액 출력
                 int resultPrice = originalTotalPrice-totalDiscount;
-                System.out.println("<할인 후 예상 결제 금액>\n"+inputComma(resultPrice)+"원\n");
-                giftBadge(resultPrice);
+                System.out.println("<할인 후 예상 결제 금액>\n"+inputComma(resultPrice)+"원\n");  //할인 후 예상 결제 금액 출력
+                giftBadge(resultPrice);         // 이벤트 베지 출력
         }
-        //todo 이벤트 기간: '크리스마스 디데이 할인'을 제외한 다른 이벤트는 2023.12.1 ~ 2023.12.31 동안 적용
 
         public static int giftBadge(int resultPrice) {
                 if (resultPrice > 20000) {

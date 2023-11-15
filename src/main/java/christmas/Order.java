@@ -1,9 +1,5 @@
 package christmas;
-
-import camp.nextstep.edu.missionutils.Console;
-
 import java.util.*;
-
 import static christmas.InputView.readOrder;
 
 class Order {
@@ -44,23 +40,31 @@ class Order {
                 exceptDrinkMap.add("아이스크림");
         }
 
-        public static HashMap<String, Integer> orderList(String orderInput) {
-                HashMap<String, Integer> orderMap = new HashMap<>();            // 주문할 오더테이블
-                String[] items = orderInput.trim().split(",");
+        public static HashMap<String, Integer> orderList(String orderInput,HashMap<String, Integer> orderMap) {String[] items = orderInput.trim().split(",");
+                int totalQuantity = 0;
                 for (String item : items) {
                         String[] parts = item.trim().split("-");
                         validateOrder(parts,parts[0],parts[1],orderMap);        // 주문 통합 유효성 검사 //todo 인덱스자체가 안맞을시 대처
-                        orderMap.put(parts[0], Integer.parseInt(parts[1]));
-                        notOnlyDrink(orderMap); // 음료만 주문했을때 재주문 로직
-//                        for (Map.Entry<String, Integer> entry : orderMap.entrySet()) {
-//
-//                        }
+                        totalQuantity +=Integer.parseInt(parts[1]);
                 }
+                for (String item : items) {
+                        String[] parts = item.trim().split("-");
+                        orderMap.put(parts[0], Integer.parseInt(parts[1]));
+                }
+                isNotOnlyDrink(orderMap); // 음료만 주문 했을때 재주문
+                limitQuantity(totalQuantity);   // 총 주문 갯수가 20개가 넘을 때 재주문
                 return orderMap;
         }
-
-
-
+        public static void limitQuantity(int totalQuantity) {
+                try {
+                        if (totalQuantity > 20) {
+                                throw new IllegalArgumentException();
+                        }
+                } catch (IllegalArgumentException e) {
+                        System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
+                        readOrder();
+                }
+        }
 
         public static void validateOrder(
                 String[] parts, String orderName, String quantity, Map<String, Integer> orderMap) {       // todo 메서드 리펙토링(복합)
@@ -93,11 +97,10 @@ class Order {
         public static void isValidNumeric(String quantity) {int toIntParts = Integer.parseInt(quantity);
                         Integer.parseInt(quantity);
                         if (!(toIntParts > 0 && toIntParts < 21)) {
-                                System.out.println("[ERROR] 유효하지 않은 주문입니다. 다시 입력해 주세요.");
                                 throw new IllegalArgumentException();
                         }
         }
-        public static void notOnlyDrink(HashMap<String, Integer> orderMap) {
+        public static void isNotOnlyDrink(HashMap<String, Integer> orderMap) {
                 try {
                         if (orderOnlyDrink(orderMap) == false) {
                                 System.out.println("[ERROR] 음료만 주문 시, 주문할 수 없습니다.");
